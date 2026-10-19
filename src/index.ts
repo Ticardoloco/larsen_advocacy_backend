@@ -15,7 +15,10 @@ import staffRoute from "./routes/staffRoute.js";
 import galleryRoute from "./routes/galleryRoute.js" ;
 import donateRoute from "./routes/donateRoute.js";
 import DonationTransactionRoute from "./routes/donationTransactionRoute.js";
-import fitTestRoute from "./routes/fitTestRoute.js"
+import fitTestRoute from "./routes/fitTestRoute.js";
+import homeImageRoute from "./routes/homeImageRoute.js";
+import donorMessageRoute from "./routes/donorMessageRoute.js";
+import partnershipRoute from "./routes/partnershipRoute.js";
 import { apiLimiter } from "./middleware/rateLimiter.js";
 
 
@@ -42,6 +45,11 @@ app.use("/api/gallery", galleryRoute)
 app.use("/api/donate", donateRoute);
 app.use("/api/donations", DonationTransactionRoute);
 app.use("/api/fit-test", fitTestRoute);
+app.use("/api/donor-message", donorMessageRoute);
+app.use("/api/home-images", homeImageRoute);
+app.use("/api/partnerships", partnershipRoute);
+
+
 const port = process.env.PORT || 4006;
 
 // Start server ONLY after establishing database connection

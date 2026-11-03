@@ -68,7 +68,7 @@ app.use(express.urlencoded({ extended: true }));
 
 setupSwagger(app);
 
-app.use("/api/", apiLimiter);
+// app.use("/api/", apiLimiter);
 
 app.use("/api/users", userRoutes);
 app.use("/api/programs", ProgramRoutes);

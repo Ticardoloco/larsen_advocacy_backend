@@ -1,9 +1,6 @@
 import dns from "dns";
-
-// Force Node.js to use Google Public DNS for SRV queries
-dns.setServers(["8.8.8.8", "8.8.4.4"]);
 import express from "express";
-import dotenv from 'dotenv'
+import dotenv from "dotenv";
 import cors from "cors";
 import { connectDB } from "./config/database.js";
 import { setupSwagger } from "./config/swagger.js";
@@ -12,7 +9,7 @@ import ProgramRoutes from "./routes/programRoute.js";
 import ImpactRoutes from "./routes/impactRoute.js";
 import storyRoute from "./routes/storyRoute.js";
 import staffRoute from "./routes/staffRoute.js";
-import galleryRoute from "./routes/galleryRoute.js" ;
+import galleryRoute from "./routes/galleryRoute.js";
 import donateRoute from "./routes/donateRoute.js";
 import DonationTransactionRoute from "./routes/donationTransactionRoute.js";
 import fitTestRoute from "./routes/fitTestRoute.js";
@@ -21,15 +18,18 @@ import donorMessageRoute from "./routes/donorMessageRoute.js";
 import partnershipRoute from "./routes/partnershipRoute.js";
 import { apiLimiter } from "./middleware/rateLimiter.js";
 
+// Force Node.js to use Google Public DNS for SRV queries
+dns.setServers(["8.8.8.8", "8.8.4.4"]);
 
 dotenv.config();
+
 const app = express();
+
 const allowedOrigins = [
   "http://localhost:3000",
   "http://127.0.0.1:3000",
-  "http://localhost:4006", // Include your current backend port if Swagger runs from it
+  "http://localhost:4006",
   "http://127.0.0.1:4006",
-  "https://manly-duchess-ovary.ngrok-free.dev",
   "https://larsenadvocacy.vercel.app",
   "https://larsenadvocacybackend-coral.vercel.app",
 ];
@@ -37,11 +37,13 @@ const allowedOrigins = [
 app.use(
   cors({
     origin: (origin, callback) => {
-      // Allow non-browser requests (Postman, server-to-server)
+      // Allow non-browser requests (Postman, server-to-server, curl, etc.)
       if (!origin) return callback(null, true);
 
-      // Check if origin is whitelisted or matches ngrok pattern
-      if (allowedOrigins.includes(origin) || origin.endsWith(".ngrok-free.dev")) {
+      if (
+        allowedOrigins.includes(origin) ||
+        origin.endsWith(".ngrok-free.dev")
+      ) {
         return callback(null, true);
       }
 
@@ -64,17 +66,16 @@ app.set("trust proxy", 1);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-setupSwagger(app)
-
+setupSwagger(app);
 
 app.use("/api/", apiLimiter);
 
-app.use('/api/users', userRoutes);
-app.use('/api/programs', ProgramRoutes);
-app.use('/api/impacts', ImpactRoutes);
+app.use("/api/users", userRoutes);
+app.use("/api/programs", ProgramRoutes);
+app.use("/api/impacts", ImpactRoutes);
 app.use("/api/stories", storyRoute);
-app.use("/api/staff", staffRoute)
-app.use("/api/gallery", galleryRoute)
+app.use("/api/staff", staffRoute);
+app.use("/api/gallery", galleryRoute);
 app.use("/api/donate", donateRoute);
 app.use("/api/donations", DonationTransactionRoute);
 app.use("/api/fit-test", fitTestRoute);
@@ -82,10 +83,9 @@ app.use("/api/donor-message", donorMessageRoute);
 app.use("/api/home-images", homeImageRoute);
 app.use("/api/partnerships", partnershipRoute);
 
-
 const port = process.env.PORT || 4007;
 
-// For local development, connect to DB and start listening
+// Local development
 if (process.env.NODE_ENV !== "production") {
   const startServer = async () => {
     try {
@@ -102,10 +102,11 @@ if (process.env.NODE_ENV !== "production") {
   };
   startServer();
 } else {
-  // For Vercel production deployment (Serverless execution)
-  // Ensure database connects on cold starts
-  connectDB().catch((err) => console.error("Database connection error:", err));
+  // Vercel / production – connect on cold start
+  connectDB().catch((err) =>
+    console.error("Database connection error:", err)
+  );
 }
 
-// CRITICAL: Export the app for Vercel's zero-config Express handler
+// Required for Vercel
 export default app;

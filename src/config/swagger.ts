@@ -29,7 +29,7 @@ const options: swaggerJSDoc.Options = {
         description: "Current Host Environment",
       },
       {
-        url: "http://localhost:4005",
+        url: "http://localhost:4006",
         description: "Local Development Server",
       },
     ],

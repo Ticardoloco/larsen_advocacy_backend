@@ -2,6 +2,7 @@ import { Router } from "express";
 import {
   submitFitTest,
   getAllFitTestResults,
+  deleteFitTestResult,
 } from "../controllers/fitTestController.js";
 import { verifyToken, verifyRole } from "../middleware/authMiddleware.js";
 
@@ -11,7 +12,7 @@ const router = Router();
  * @swagger
  * tags:
  *   - name: FitTest
- *   - description: Operations for managing and grading the Child Protection Fit Test
+ *     description: Operations for managing and grading the Child Protection Fit Test
  */
 
 /**
@@ -76,6 +77,40 @@ router.get(
   verifyToken,
   verifyRole("admin", "super-admin"),
   getAllFitTestResults
+);
+
+/**
+ * @swagger
+ * /api/fit-test/results/{id}:
+ *   delete:
+ *     summary: Delete a fit test result by ID (Admin / Super Admin)
+ *     tags: [FitTest]
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The target fit test result ID to delete
+ *     responses:
+ *       200:
+ *         description: Fit test result deleted successfully
+ *       401:
+ *         description: Not authorized
+ *       403:
+ *         description: Forbidden - Insufficient permissions
+ *       404:
+ *         description: Fit test result not found
+ *       500:
+ *         description: Internal Server Error
+ */
+router.delete(
+  "/results/:id",
+  verifyToken,
+  verifyRole("admin", "super-admin"),
+  deleteFitTestResult
 );
 
 export default router;

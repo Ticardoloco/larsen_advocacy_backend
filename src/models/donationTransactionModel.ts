@@ -4,7 +4,7 @@ export interface IDonationTransaction extends Document {
   donorName: string;
   email: string;
   amount: number;
-  fund: "general" | "omokunrinimi" | "bank200" | "campaign";
+  fund: "general" | "omokunrinnimi" | "bank200" | "campaign";
   currency: "NGN" | "USD";
   reference: string;
   checkoutId?: string;
@@ -36,7 +36,7 @@ const donationTransactionSchema: Schema<IDonationTransaction> =
         type: String,
         required: [true, "Fund selection is required"],
         enum: {
-          values: ["general", "omokunrinimi", "bank200", "campaign"],
+          values: ["general", "omokunrinnimi", "bank200", "campaign"],
           message: "{VALUE} is not a valid fund category",
         },
         lowercase: true,

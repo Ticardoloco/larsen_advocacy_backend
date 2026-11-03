@@ -2,6 +2,7 @@ import { Router } from "express";
 import {
   registerUser,
   registerAdmin,
+  changePassword,
   loginUser,
   logoutUser,
   getUserProfile,
@@ -10,11 +11,8 @@ import {
   suspendUser,
   updateUserRole,
   deleteUserProfile,
-} from "../controllers/userController";
-import { verifyToken, verifyRole } from "../middleware/authMiddleware";
-
-// TODO: Import your actual authentication and role-checking middleware here
-// import { verifyToken, verifyRole } from "../middleware/authMiddleware";
+} from "../controllers/userController.js";
+import { verifyToken, verifyRole } from "../middleware/authMiddleware.js";
 
 const router = Router();
 
@@ -134,6 +132,44 @@ router.post("/login", loginUser);
 
 /**
  * @swagger
+ * /api/users/change-password:
+ *   put:
+ *     summary: Change password for currently logged-in user
+ *     tags: [Users]
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - currentPassword
+ *               - newPassword
+ *             properties:
+ *               currentPassword:
+ *                 type: string
+ *                 example: SecurePassword123!
+ *               newPassword:
+ *                 type: string
+ *                 example: NewSecurePassword123!
+ *     responses:
+ *       200:
+ *         description: Password changed successfully
+ *       400:
+ *         description: Incorrect current password or missing fields
+ *       401:
+ *         description: Not authorized
+ *       404:
+ *         description: User not found
+ *       500:
+ *         description: Internal Server Error
+ */
+router.put("/change-password", verifyToken, changePassword);
+
+/**
+ * @swagger
  * /api/users/logout:
  *   post:
  *     summary: Log out a user
@@ -246,10 +282,21 @@ router.get("/profiles", verifyToken, verifyRole("super-admin"), getUserProfiles)
  *                 example: +2348012345678
  *               gender:
  *                 type: string
- *                 enum: [Male, Female, Other]
- *                 example: Male
+ *                 enum: [male, female, other]
+ *                 example: male
  *               address:
- *                 $ref: '#/components/schemas/Address'
+ *                 type: object
+ *                 properties:
+ *                   street:
+ *                     type: string
+ *                   city:
+ *                     type: string
+ *                   state:
+ *                     type: string
+ *                   zipCode:
+ *                     type: string
+ *                   country:
+ *                     type: string
  *     responses:
  *       200:
  *         description: User profile updated successfully

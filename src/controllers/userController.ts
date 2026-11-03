@@ -103,6 +103,60 @@ export const registerAdmin = async (req: Request, res: Response) => {
   }
 };
 
+/**
+ * @desc    Change password for logged-in user
+ * @route   PUT /api/users/change-password
+ * @access  Private (requires authentication token)
+ */
+export const changePassword = async (req: Request, res: Response) => {
+  try {
+    const userId = (req as any).user?.userId;
+
+    if (!userId) {
+      return res.status(401).json({ message: "Not authorized" });
+    }
+
+    const { currentPassword, newPassword } = req.body as {
+      currentPassword?: string;
+      newPassword?: string;
+    };
+
+    if (!currentPassword || !newPassword) {
+      return res.status(400).json({
+        message: "Current password and new password are required",
+      });
+    }
+
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Verify current password matches
+    const isMatch = await bcrypt.compare(currentPassword, user.passwordHash);
+    if (!isMatch) {
+      return res.status(400).json({
+        message: "Incorrect current password",
+      });
+    }
+
+    // Hash and save new password
+    const passwordHash = await bcrypt.hash(newPassword, 10);
+    user.passwordHash = passwordHash;
+    await user.save();
+
+    return res.status(200).json({
+      message: "Password changed successfully",
+    });
+  } catch (error: any) {
+    console.error("Error changing password:", error);
+    return res.status(500).json({
+      message: "Internal server error",
+      error: error.message || error,
+    });
+  }
+};
+
 export const loginUser = async (req: Request, res: Response) => {
   try {
     const { email, password } = req.body as { email: string; password: string };
@@ -361,6 +415,7 @@ export const deleteUserProfile = async (req: Request, res: Response) => {
 export default {
   registerUser,
   registerAdmin,
+  changePassword,
   loginUser,
   logoutUser,
   suspendUser,

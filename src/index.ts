@@ -24,7 +24,38 @@ import { apiLimiter } from "./middleware/rateLimiter.js";
 
 dotenv.config();
 const app = express();
-app.use(cors());
+const allowedOrigins = [
+  "http://localhost:3000",
+  "http://127.0.0.1:3000",
+  "http://localhost:4006", // Include your current backend port if Swagger runs from it
+  "http://127.0.0.1:4006",
+  "https://manly-duchess-ovary.ngrok-free.dev", // Your exact active Ngrok domain
+];
+
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      // Allow non-browser requests (Postman, server-to-server)
+      if (!origin) return callback(null, true);
+
+      // Check if origin is whitelisted or matches ngrok pattern
+      if (allowedOrigins.includes(origin) || origin.endsWith(".ngrok-free.dev")) {
+        return callback(null, true);
+      }
+
+      return callback(new Error("Not allowed by CORS"));
+    },
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+    allowedHeaders: [
+      "Content-Type",
+      "Authorization",
+      "ngrok-skip-browser-warning",
+      "X-Requested-With",
+      "Accept",
+    ],
+  })
+);
 
 app.set("trust proxy", 1);
 
@@ -34,7 +65,7 @@ app.use(express.urlencoded({ extended: true }));
 setupSwagger(app)
 
 
-app.use("/api/", apiLimiter);
+// app.use("/api/", apiLimiter);
 
 app.use('/api/users', userRoutes);
 app.use('/api/programs', ProgramRoutes);
@@ -50,7 +81,7 @@ app.use("/api/home-images", homeImageRoute);
 app.use("/api/partnerships", partnershipRoute);
 
 
-const port = process.env.PORT || 4006;
+const port = process.env.PORT || 4007;
 
 // Start server ONLY after establishing database connection
 const startServer = async () => {

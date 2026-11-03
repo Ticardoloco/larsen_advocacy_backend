@@ -53,8 +53,8 @@ export const initializeDonation = async (req: Request, res: Response) => {
         reference,
         success_url:
           callback_url ||
-          `${process.env.FRONTEND_URL}/donation/success?reference=${reference}`,
-        cancel_url: `${process.env.FRONTEND_URL}/donation/cancel?reference=${reference}`,
+          `${process.env.FRONTEND_URL}/donate/success?reference=${reference}`,
+        cancel_url: `${process.env.FRONTEND_URL}/donate/cancel?reference=${reference}`,
         metadata: {
           donorName,
           fund,

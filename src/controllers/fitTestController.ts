@@ -128,7 +128,32 @@ export const getAllFitTestResults = async (_req: Request, res: Response) => {
   }
 };
 
+/**
+ * @desc    Delete a fit test result by ID (Admin)
+ * @route   DELETE /api/fit-test/results/:id
+ * @access  Private (Admin)
+ */
+export const deleteFitTestResult = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const deletedResult = await FitTestResult.findByIdAndDelete(id);
+
+    if (!deletedResult) {
+      return res.status(404).json({ message: "Fit test result not found" });
+    }
+
+    return res.status(200).json({
+      message: "Fit test result deleted successfully",
+      data: deletedResult,
+    });
+  } catch (error: any) {
+    console.error("Error deleting fit test result:", error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
+
 export default {
     submitFitTest,
-    getAllFitTestResults
+    getAllFitTestResults,
+    deleteFitTestResult
 }

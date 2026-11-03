@@ -67,7 +67,7 @@ app.use(express.urlencoded({ extended: true }));
 setupSwagger(app)
 
 
-// app.use("/api/", apiLimiter);
+app.use("/api/", apiLimiter);
 
 app.use('/api/users', userRoutes);
 app.use('/api/programs', ProgramRoutes);
@@ -85,19 +85,27 @@ app.use("/api/partnerships", partnershipRoute);
 
 const port = process.env.PORT || 4007;
 
-// Start server ONLY after establishing database connection
-const startServer = async () => {
-  try {
-    await connectDB();
-    console.log("Database connection established successfully.");
+// For local development, connect to DB and start listening
+if (process.env.NODE_ENV !== "production") {
+  const startServer = async () => {
+    try {
+      await connectDB();
+      console.log("Database connection established successfully.");
 
-    app.listen(port, () => {
-      console.log(`Server listening on port ${port}`);
-    });
-  } catch (error) {
-    console.error("Failed to connect to the database. Server not started.", error);
-    process.exit(1);
-  }
-};
+      app.listen(port, () => {
+        console.log(`Server listening on port ${port}`);
+      });
+    } catch (error) {
+      console.error("Failed to connect to the database. Server not started.", error);
+      process.exit(1);
+    }
+  };
+  startServer();
+} else {
+  // For Vercel production deployment (Serverless execution)
+  // Ensure database connects on cold starts
+  connectDB().catch((err) => console.error("Database connection error:", err));
+}
 
-startServer();
+// CRITICAL: Export the app for Vercel's zero-config Express handler
+export default app;

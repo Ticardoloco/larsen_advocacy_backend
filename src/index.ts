@@ -29,7 +29,9 @@ const allowedOrigins = [
   "http://127.0.0.1:3000",
   "http://localhost:4006", // Include your current backend port if Swagger runs from it
   "http://127.0.0.1:4006",
-  "https://manly-duchess-ovary.ngrok-free.dev", // Your exact active Ngrok domain
+  "https://manly-duchess-ovary.ngrok-free.dev",
+  "https://larsenadvocacy.vercel.app",
+  "https://larsenadvocacybackend-coral.vercel.app",
 ];
 
 app.use(

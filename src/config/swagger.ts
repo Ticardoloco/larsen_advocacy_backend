@@ -32,6 +32,11 @@ const options: swaggerJSDoc.Options = {
         url: "http://localhost:4006",
         description: "Local Development Server",
       },
+
+      {
+        url: "https://larsenadvocacybackend-coral.vercel.app/",
+        description: "Vercel Development Server",
+      },
     ],
     components: {
       securitySchemes: {

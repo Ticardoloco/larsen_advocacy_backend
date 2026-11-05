@@ -16,6 +16,7 @@ import fitTestRoute from "./routes/fitTestRoute.js";
 import homeImageRoute from "./routes/homeImageRoute.js";
 import donorMessageRoute from "./routes/donorMessageRoute.js";
 import partnershipRoute from "./routes/partnershipRoute.js";
+import getSupportRoute from "./routes/getSupportRoute.js";
 import { apiLimiter } from "./middleware/rateLimiter.js";
 
 // Force Node.js to use Google Public DNS for SRV queries
@@ -82,7 +83,7 @@ app.use("/api/fit-test", fitTestRoute);
 app.use("/api/donor-message", donorMessageRoute);
 app.use("/api/home-images", homeImageRoute);
 app.use("/api/partnerships", partnershipRoute);
-
+app.use("/api/support", getSupportRoute);
 const port = process.env.PORT || 4007;
 
 // Local development
